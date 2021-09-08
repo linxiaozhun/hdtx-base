@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+
+    <properties resource="generatorConfig.properties" />
+
+    <!-- Note that you have to specify the driver location here. The tool does
+        not appear to use the Eclipse classpath or the project classpath -->
+    <classPathEntry
+            location="${mybatis.generator.jdbc.driver.path}" />
+
+    <context id="context1" targetRuntime="MyBatis3Simple">
+
+        <commentGenerator>
+            <property name="suppressAllComments" value="true" />
+        </commentGenerator>
+
+        <!-- Where to pull the data from -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="${mybatis.generator.jdbc.url}"
+                        userId="${mybatis.generator.jdbc.user}"
+                        password="${mybatis.generator.jdbc.password}" />
+
+        <javaTypeResolver >
+            <property name="forceBigDecimals" value="true" />
+        </javaTypeResolver>
+
+        <!-- Note that the targetProject refers to the name of the project in your
+            Eclipse IDE (not the name of the Maven project). If run outside of the IDE
+            you can specify a path instead, but there doesn't seem to be a nice way to
+            specify a single path for both usage scenarios. -->
+
+        <!-- Generates the model (the objects that hold the data) -->
+        <javaModelGenerator targetPackage="${mybatis.generator.model.package}"
+                            targetProject="${mybatis.generator.target.dir}">
+            <property name="enableSubPackages" value="true" />
+        </javaModelGenerator>
+
+        <!-- !!!! Mapper XML Configurations !!!! -->
+        <sqlMapGenerator targetPackage="${mybatis.generator.mapper.package}" targetProject="${mybatis.generator.target.dir}">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!-- Generates the interfaces used to retrieve data -->
+        <javaClientGenerator targetPackage="${mybatis.generator.dao.package}"
+                             targetProject="${mybatis.generator.target.dir}" type="XMLMAPPER" >
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+
+        <!-- List of tables to inspect -->
+        <table tableName="trade" domainObjectName="Trade"/>
+    </context>
+
+</generatorConfiguration>

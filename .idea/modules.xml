@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/apiutils/apiutils.iml" filepath="$PROJECT_DIR$/apiutils/apiutils.iml" />
+      <module fileurl="file://$PROJECT_DIR$/hdtx-base.iml" filepath="$PROJECT_DIR$/hdtx-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/common/hdtx-base-common.iml" filepath="$PROJECT_DIR$/common/hdtx-base-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/utils/util.iml" filepath="$PROJECT_DIR$/utils/util.iml" />
+    </modules>
+  </component>
+</project>

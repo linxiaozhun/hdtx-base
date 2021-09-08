@@ -1,0 +1,4 @@
+org.springframework.context.ApplicationContextInitializer=\
+com.hdtx.base.common.spring.TdBaseApplicationContextInitializer
+org.springframework.boot.SpringApplicationRunListener=\
+com.hdtx.base.common.spring.ApplicationStartupInitializer
