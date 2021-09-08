@@ -37,5 +37,24 @@ public abstract class SpringViewUtils {
         return mav;
     }
 
+    public static ModelAndView createJsonErrorView(Object obj, ErrorInfoConverter errorInfoConverter) {
+        ModelAndView mav = new ModelAndView();
+        MappingJackson2JsonView view = new MappingJackson2JsonView(JsonUtils.OBJECT_MAPPER);
+        Map<String, Object> errorInfoMap = null;
+        if(errorInfoConverter != null) {
+            try {
+                errorInfoMap = errorInfoConverter.convertErrorToMap(obj);
+            } catch (Exception e) {
+                log.error("", e);
+            }
+        }
+        if(errorInfoMap == null) {
+            errorInfoMap = defaultErrorInfoConverter.convertErrorToMap(obj);
+        }
+        view.setAttributesMap(errorInfoMap);
+        mav.setView(view);
+        return mav;
+    }
+
 
 }

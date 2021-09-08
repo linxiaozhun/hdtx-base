@@ -1,6 +1,6 @@
 package com.hdtx.base.apiutils;
 
-import com.hdtx.base.apiutils.api.CommonErrorCode;
+import com.hdtx.base.apiutils.api.CommonError;
 
 /**
  * @author huangwenc
@@ -31,7 +31,7 @@ public class ScResp<T> {
     }
 
     public static ScResp internalError() {
-        return create(CommonErrorCode.INTERNAL_ERROR.getMessage(), CommonErrorCode.INTERNAL_ERROR.getStatus());
+        return create(CommonError.INTERNAL_ERROR.getMessage(), CommonError.INTERNAL_ERROR.getStatus());
     }
 
     public boolean isOk() {

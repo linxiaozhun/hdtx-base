@@ -1,17 +1,21 @@
 package com.hdtx.base.common.spring;
 
+import com.hdtx.base.common.log.SpringRequestLogFilter;
 import com.hdtx.base.common.spring.actuator.*;
 import com.hdtx.base.common.spring.container.CustomConfigurableContainer;
 
 import com.hdtx.base.common.spring.mvc.AppExceptionHandlerController;
 import com.hdtx.base.common.spring.mvc.BaseWebMvcConfig;
+import com.hdtx.base.common.spring.refresh.DbRefreshActuatorEndpoint;
+import com.hdtx.base.common.spring.refresh.DbRefreshService;
 import com.hdtx.base.common.spring.security.SpringSecurityBaseConfiguration;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.info.GitProperties;
 import org.springframework.boot.info.InfoProperties;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
@@ -89,16 +93,20 @@ public class WebApplication {
 
 
     @Bean
+    public SpringRequestLogFilter springRequestLogFilter() {
+        return new SpringRequestLogFilter();
+    }
+
+
+    @Bean
     public WebMvcConfigurer baseWebMvcConfigurer() {
         return new BaseWebMvcConfig();
     }
 
-
-
     @Bean
     @Order(DEFAULT_ORDER)
-    public CustomGitInfoContributor gitInfoContributor(GitProperties properties) {
-        return new CustomGitInfoContributor(properties);
+    public CustomGitInfoContributor gitInfoContributor(GitProperties gitProperties) {
+        return new CustomGitInfoContributor(gitProperties);
     }
 
     @Bean
@@ -137,7 +145,7 @@ public class WebApplication {
                 if(i != 0) {
                     resource = resources.nextElement();
                 }
-                if(resource.toString().contains("/common-1.0")) {
+                if(resource.toString().contains("/sc-base-common-1.0")) {
                     tdBaseGitResource = new UrlResource(resource);
                     break;
                 }
@@ -169,8 +177,15 @@ public class WebApplication {
         return target;
     }
 
+    @Bean
+    public DbRefreshActuatorEndpoint dbRefreshActuatorEndpoint() {
+        return new DbRefreshActuatorEndpoint();
+    }
 
-
+    @Bean
+    public DbRefreshService dbRefreshService() {
+        return new DbRefreshService();
+    }
 
     @Bean
     @ConditionalOnMissingBean

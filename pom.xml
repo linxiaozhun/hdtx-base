@@ -16,7 +16,7 @@
     </parent>
     <groupId>com.hdtx.base</groupId>
     <artifactId>hdtx-base</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -37,14 +37,23 @@
         <slf4j.version>1.7.30</slf4j.version>
         <lombok.version>1.18.12</lombok.version>
         <kingbase.servion>1.0-SNAPSHOT</kingbase.servion>
-        <docker.host>tcp://192.168.22.177:2375</docker.host>
+        <docker.host>tcp://192.168.22.178:2375</docker.host>
         <docker.registry>registry.cn-shenzhen.aliyuncs.com</docker.registry>
-        <docker.username>hongdatongxin</docker.username>
-        <docker.password>430525fgh**</docker.password>
+        <docker.username>linxiaozhun</docker.username>
+        <docker.password>430525fgh</docker.password>
+        <scbase.version>2.0-SNAPSHOT</scbase.version>
+        <weixin.version>3.8.0</weixin.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -58,7 +67,7 @@
             <dependency>
                 <groupId>com.alibaba</groupId>
                 <artifactId>druid</artifactId>
-                <version>1.0.25</version>
+                <version>1.2.8</version>
             </dependency>
 
             <dependency>
@@ -93,11 +102,17 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>2.9.0</version>
+                <version>2.12.3</version>
             </dependency>
             <dependency>
                 <groupId>org.jolokia</groupId>
                 <artifactId>jolokia-core</artifactId>
+            </dependency>
+            <!--微信功能模块-->
+            <dependency>
+                <groupId>com.github.binarywang</groupId>
+                <artifactId>wx-java-spring-boot-starters</artifactId>
+                <version>${weixin.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -137,50 +152,14 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
-                <version>2.1.5</version>
-                <configuration>
-                    <!--日期格式;默认值:dd.MM.yyyy '@' HH:mm:ss z;-->
-                    <dateFormat>yyyyMMddHHmmss</dateFormat>
-                    <!--,构建过程中,是否打印详细信息;默认值:false;-->
-                    <verbose>true</verbose>
-                    <!-- ".git"文件路径;默认值:${project.basedir}/.git; -->
-                    <dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
-                    <!--若项目打包类型为pom,是否取消构建;默认值:true;-->
-                    <skipPoms>false</skipPoms>
-                    <!--是否生成"git.properties"文件;默认值:false;-->
-                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
-                    <!--指定"git.properties"文件的存放路径(相对于${project.basedir}的一个路径);-->
-                    <generateGitPropertiesFilename>git.properties</generateGitPropertiesFilename>
-                    <!--".git"文件夹未找到时,构建是否失败;若设置true,则构建失败;若设置false,则跳过执行该目标;默认值:true;-->
-                    <failOnNoGitDirectory>true</failOnNoGitDirectory>
-
-                    <!--git描述配置,可选;由JGit提供实现;-->
-                    <gitDescribe>
-                        <!--是否生成描述属性-->
-                        <skip>false</skip>
-                        <!--提交操作未发现tag时,仅打印提交操作ID,-->
-                        <always>false</always>
-                        <!--提交操作ID显式字符长度,最大值为:40;默认值:7;
-                            0代表特殊意义;后面有解释;
-                        -->
-                        <abbrev>7</abbrev>
-                        <!--构建触发时,代码有修改时(即"dirty state"),添加指定后缀;默认值:"";-->
-                        <dirty>-dirty</dirty>
-                        <!--always print using the "tag-commits_from_tag-g_commit_id-maybe_dirty" format, even if "on" a tag.
-                            The distance will always be 0 if you're "on" the tag.
-                        -->
-                        <forceLongFormat>false</forceLongFormat>
-                    </gitDescribe>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.0.2</version>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
             </plugin>
         </plugins>
         <pluginManagement>

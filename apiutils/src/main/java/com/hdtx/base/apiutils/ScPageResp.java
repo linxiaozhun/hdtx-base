@@ -1,6 +1,6 @@
 package com.hdtx.base.apiutils;
 
-import com.hdtx.base.apiutils.api.CommonErrorCode;
+import com.hdtx.base.apiutils.api.CommonError;
 
 import java.util.List;
 import java.util.Objects;
@@ -49,7 +49,7 @@ public class ScPageResp<T> {
     }
 
     public static ScPageResp internalError() {
-        return create(CommonErrorCode.INTERNAL_ERROR.getMessage(), CommonErrorCode.INTERNAL_ERROR.getStatus());
+        return create(CommonError.INTERNAL_ERROR.getMessage(), CommonError.INTERNAL_ERROR.getStatus());
     }
 
 

@@ -1,6 +1,6 @@
 package com.hdtx.base.apiutils.exception;
 
-import com.hdtx.base.apiutils.api.CommonErrorCode;
+import com.hdtx.base.apiutils.api.CommonError;
 import com.hdtx.base.apiutils.api.ErrorCode;
 
 /**
@@ -9,7 +9,7 @@ import com.hdtx.base.apiutils.api.ErrorCode;
  */
 public class ServiceUnavailableException extends AppBusinessException {
 
-    private static final ErrorCode ERROR_CODE = CommonErrorCode.SERVICE_UNAVAILABLE;
+    private static final ErrorCode ERROR_CODE = CommonError.SERVICE_UNAVAILABLE;
 
     public ServiceUnavailableException(String message) {
         super(ERROR_CODE, " 远程服务不可用: " + message);
