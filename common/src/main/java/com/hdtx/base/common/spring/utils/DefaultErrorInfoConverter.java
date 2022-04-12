@@ -15,4 +15,9 @@ public class DefaultErrorInfoConverter implements ErrorInfoConverter {
     public Map<String, Object> convertErrorInfoToMap(ErrorInfo errorInfo) {
         return JsonUtils.object2Map(errorInfo);
     }
+
+    @Override
+    public Map<String, Object> convertErrorToMap(Object obj) {
+        return JsonUtils.object2Map(obj);
+    }
 }

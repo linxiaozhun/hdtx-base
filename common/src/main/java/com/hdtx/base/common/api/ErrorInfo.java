@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ErrorInfo {
 
-    private String code;
+    private int code;
 
     private String message;
 
@@ -18,9 +18,9 @@ public class ErrorInfo {
 
     @Deprecated
     @JsonCreator
-    public ErrorInfo(@JsonProperty("code") String code,
-                 @JsonProperty("requestUri") String requestUri,
-                 @JsonProperty(value = "message", defaultValue = "") String message) {
+    public ErrorInfo(@JsonProperty("code") int code,
+                     @JsonProperty("requestUri") String requestUri,
+                     @JsonProperty(value = "message", defaultValue = "") String message) {
         this(code, requestUri, message, 500);
     }
 
@@ -32,17 +32,23 @@ public class ErrorInfo {
         this(errorCode.getCode(), requestUri, message == null ? errorCode.getMessage() : message, errorCode.getStatus());
     }
 
-    public ErrorInfo(String code, String requestUri, String message, int status) {
+    @Deprecated
+    public ErrorInfo(int code, String requestUri, String message, int status) {
         this.code = code;
         this.requestUri = requestUri;
         this.message = message;
         this.status = status;
     }
 
+    public ErrorInfo(String code, String requestUri, String message, int status) {
+        this.code = status;
+        this.requestUri = requestUri;
+        this.message = message;
+        this.status = status;
+    }
 
 
-
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
@@ -58,7 +64,7 @@ public class ErrorInfo {
         return status;
     }
 
-    public void setCode(String code) {
+    public void setCode(int code) {
         this.code = code;
     }
 

@@ -22,6 +22,8 @@ public interface ErrorInfoConverter {
     Map<String, Object> convertErrorInfoToMap(ErrorInfo errorInfo);
 
 
+    Map<String,Object> convertErrorToMap(Object obj);
+
     /**
      * 是否根据errorInfo的httpStatus修改返回的http状态码, 默认为true
      * @return

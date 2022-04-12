@@ -1,14 +1,23 @@
 package com.hdtx.base.common.spring;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hdtx.base.common.spring.refresh.TdContextRefresher;
+import com.hdtx.base.common.spring.utils.EnhancedRestTemplate;
+import com.hdtx.base.common.spring.utils.OkHttpUtils;
 import com.hdtx.base.common.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.cloud.context.refresh.ContextRefresher;
+import org.springframework.cloud.context.scope.refresh.RefreshScope;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @Author liubin
@@ -16,7 +25,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
  */
 @EnableHystrix
 @MapperScan(basePackages = {"com.hdtx.**.dao","com.hdtx.**.mapper"})
-@ComponentScan({"com.hdtx.**.service", "com.hdtx.**.fallback", "com.hdtx.**.component","com.hdtx.**"})
+@ComponentScan({"com.hdtx.**.service", "com.hdtx.**.fallback", "com.hdtx.**.component","com.hdtx.**","com.hdtx.**.handle"})
 @Slf4j
 public class BaseConfiguration{
 
@@ -46,7 +55,33 @@ public class BaseConfiguration{
         return new MappingJackson2HttpMessageConverter(objectMapper());
     }
 
+    @Primary
+    @Bean
+    public okhttp3.OkHttpClient okHttpClient(ApplicationConstant applicationConstant){
+        return OkHttpUtils.okHttpClientBuilder(applicationConstant).build();
+    }
 
+    @LoadBalanced
+    @Bean(name = "serviceRestTemplate")
+    public RestTemplate restTemplate(MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter,
+                                     OkHttpClient okHttpClient) {
+
+        return EnhancedRestTemplate.assembleRestTemplate(mappingJackson2HttpMessageConverter, okHttpClient);
+    }
+
+    @Primary
+    @Bean(name = "rawRestTemplate")
+    public RestTemplate rawRestTemplate(MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter,
+                                        OkHttpClient okHttpClient) {
+
+        return EnhancedRestTemplate.assembleRestTemplate(mappingJackson2HttpMessageConverter, okHttpClient);
+    }
+
+    @Bean
+    public ContextRefresher contextRefresher(ConfigurableApplicationContext context,
+                                             RefreshScope scope) {
+        return new TdContextRefresher(context, scope);
+    }
 
 
 

@@ -1,6 +1,8 @@
 package com.hdtx.base.common.spring.mvc;
 
 import com.google.common.base.Joiner;
+import com.hdtx.base.apiutils.ResultBody;
+import com.hdtx.base.apiutils.api.BaseErrorInfo;
 import com.hdtx.base.common.api.CommonErrorCode;
 import com.hdtx.base.common.api.ErrorCode;
 import com.hdtx.base.common.api.ErrorInfo;
@@ -8,6 +10,7 @@ import com.hdtx.base.common.exception.AppBusinessException;
 import com.hdtx.base.common.exception.BaseException;
 import com.hdtx.base.common.exception.ServiceUnavailableException;
 import com.hdtx.base.common.spring.utils.SpringViewUtils;
+import com.hdtx.base.common.utils.JsonUtils;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.netflix.hystrix.exception.HystrixTimeoutException;
 
@@ -21,6 +24,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -48,11 +52,12 @@ import java.util.stream.Collectors;
  * @Date 2017/5/15 15:02
  */
 @ControllerAdvice
+@Order(-999)
 public class AppExceptionHandlerController extends CustomResponseEntityExceptionHandler {
 
     protected Logger logger = LoggerFactory.getLogger(AppExceptionHandlerController.class);
 
-    @Autowired
+    @Autowired(required = false)
     private ApplicationConstant applicationConstant;
 
     @Autowired(required = false)
@@ -97,7 +102,7 @@ public class AppExceptionHandlerController extends CustomResponseEntityException
     public ModelAndView handleServiceUnavailableException(HttpServletRequest request, HttpServletResponse response, ServiceUnavailableException e) {
 
         logger.error(e.getMessage(), e);
-        return createModeAndViewResponse(e.getCode(), e.getHttpStatus(), request, response, e.getMessage());
+        return createModeAndViewResponse(e.getHttpStatus(), e.getHttpStatus(), request, response, e.getMessage());
     }
 
     @ExceptionHandler(value = RemoteCallException.class)
@@ -133,7 +138,13 @@ public class AppExceptionHandlerController extends CustomResponseEntityException
     public ModelAndView handleAppBusinessException(HttpServletRequest request, HttpServletResponse response, AppBusinessException e) {
 
         //业务异常
-        return createModeAndViewResponse(e.getCode(), e.getHttpStatus(), request, response, e.getMessage());
+        return createModeAndViewResponse(e.getHttpStatus(), e.getHttpStatus(), request, response, e.getMessage());
+    }
+
+    @ExceptionHandler(value = IllegalArgumentException.class)
+    public ModelAndView handleAppBusinessException(HttpServletRequest request, HttpServletResponse response, IllegalArgumentException e) {
+        //业务异常
+        return createModeAndViewResponse(CommonErrorCode.INTERNAL_ERROR.getCode(), 200, request, response, e.getMessage());
     }
 
     @ExceptionHandler(value = BaseException.class)
@@ -161,6 +172,7 @@ public class AppExceptionHandlerController extends CustomResponseEntityException
         return createModeAndViewResponse(errorCode.getCode(), errorCode.getStatus(), request, response, message);
     }
 
+    @Deprecated
     protected ModelAndView createModeAndViewResponse(String code, int httpStatus, HttpServletRequest request, HttpServletResponse response, String message) {
 
         boolean needJsonResponse = ServletWebUtils.isNeedJsonResponse(request);
@@ -184,8 +196,33 @@ public class AppExceptionHandlerController extends CustomResponseEntityException
 
     }
 
+    protected ModelAndView createModeAndViewResponse(int code, int httpStatus, HttpServletRequest request, HttpServletResponse response, String message) {
+
+        boolean needJsonResponse = ServletWebUtils.isNeedJsonResponse(request);
+        if (!isNeedDetailErrorMessage(needJsonResponse) && !needJsonResponse) {
+            message = "系统出现错误";
+        }
+        ResultBody resultBody= ResultBody.create(message,code);
+
+        if (errorInfoConverter == null) {
+            errorInfoConverter = new DefaultErrorInfoConverter();
+        }
+        if (errorInfoConverter.modifyHttpStatus()) {
+            response.setStatus(httpStatus==500? HttpStatus.OK.value():httpStatus);
+        }
+
+        if (needJsonResponse) {
+            return SpringViewUtils.createJsonErrorView(resultBody, errorInfoConverter);
+        } else {
+            return createErrorModelAndView(httpStatus, resultBody);
+        }
+
+    }
+
+
+    @Deprecated
     protected ModelAndView createErrorModelAndView(int httpStatus, ErrorInfo error) {
-        String viewName = "500";
+        String viewName = "200";
         if (httpStatus == 401 || httpStatus == 404) {
             viewName = String.valueOf(httpStatus);
         }
@@ -194,6 +231,22 @@ public class AppExceptionHandlerController extends CustomResponseEntityException
         String errorMessage = "";
         if (isNeedDetailErrorMessage(false)) {
             errorMessage = error.getMessage();
+        }
+        map.put("errorMessage", errorMessage);
+        return new ModelAndView(viewName, map);
+    }
+
+
+    protected ModelAndView createErrorModelAndView(int httpStatus, ResultBody error) {
+        String viewName = "200";
+        if (httpStatus == 401 || httpStatus == 404) {
+            viewName = String.valueOf(httpStatus);
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("errorInfo", error);
+        String errorMessage = "";
+        if (isNeedDetailErrorMessage(false)) {
+            errorMessage = error.getMsg();
         }
         map.put("errorMessage", errorMessage);
         return new ModelAndView(viewName, map);

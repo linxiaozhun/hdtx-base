@@ -15,7 +15,7 @@ public interface ErrorCode {
     }
 
     @Deprecated
-    String getCode();
+    int getCode();
 
     int getStatus();
 
