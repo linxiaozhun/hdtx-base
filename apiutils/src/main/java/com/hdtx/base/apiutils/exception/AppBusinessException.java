@@ -1,5 +1,6 @@
 package com.hdtx.base.apiutils.exception;
 
+
 import com.hdtx.base.apiutils.api.CommonErrorCode;
 import com.hdtx.base.apiutils.api.ErrorCode;
 

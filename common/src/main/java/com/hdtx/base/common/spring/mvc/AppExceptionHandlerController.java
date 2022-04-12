@@ -2,15 +2,13 @@ package com.hdtx.base.common.spring.mvc;
 
 import com.google.common.base.Joiner;
 import com.hdtx.base.apiutils.ResultBody;
-import com.hdtx.base.apiutils.api.BaseErrorInfo;
-import com.hdtx.base.common.api.CommonErrorCode;
-import com.hdtx.base.common.api.ErrorCode;
-import com.hdtx.base.common.api.ErrorInfo;
+import com.hdtx.base.apiutils.api.CommonErrorCode;
+import com.hdtx.base.apiutils.api.ErrorCode;
+import com.hdtx.base.apiutils.api.ErrorInfo;
 import com.hdtx.base.common.exception.AppBusinessException;
 import com.hdtx.base.common.exception.BaseException;
 import com.hdtx.base.common.exception.ServiceUnavailableException;
 import com.hdtx.base.common.spring.utils.SpringViewUtils;
-import com.hdtx.base.common.utils.JsonUtils;
 import com.netflix.hystrix.exception.HystrixRuntimeException;
 import com.netflix.hystrix.exception.HystrixTimeoutException;
 
@@ -70,7 +68,7 @@ public class AppExceptionHandlerController extends CustomResponseEntityException
             HttpServletRequest request = servletRequest.getNativeRequest(HttpServletRequest.class);
             HttpServletResponse response = servletRequest.getNativeResponse(HttpServletResponse.class);
 
-            ErrorCode errorCode = CommonErrorCode.fromHttpStatus(status.value());
+            com.hdtx.base.apiutils.api.ErrorCode errorCode = CommonErrorCode.fromHttpStatus(status.value());
             List<ObjectError> allErrors = ex.getAllErrors();
             String errorMsg = extractErrorMessageFromObjectErrors(allErrors, errorCode.getMessage());
 

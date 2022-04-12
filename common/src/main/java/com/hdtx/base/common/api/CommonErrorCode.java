@@ -44,7 +44,7 @@ public enum CommonErrorCode implements ErrorCode {
 
     @Override
     public int getCode() {
-        return this.status;
+        return status;
     }
 
     @Override
