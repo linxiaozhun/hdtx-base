@@ -27,6 +27,7 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -47,6 +48,7 @@ import java.util.*;
  * @Date 2017/7/14 10:00
  */
 @Configuration
+@EnableConfigurationProperties(MybatisMateProperties.class)
 @EnableTransactionManagement
 public class MultipleDataSourceConfiguration implements BeanDefinitionRegistryPostProcessor, ApplicationContextAware {
 
@@ -109,20 +111,14 @@ public class MultipleDataSourceConfiguration implements BeanDefinitionRegistryPo
 
 
     @Bean
-    public MybatisMateHandler mybatisMateHandler() {
-        return new MybatisMateHandler(mybatisMateProperties());
-    }
-
-    @Bean
-    @RefreshScope
-    public MybatisMateProperties mybatisMateProperties() {
-        return new MybatisMateProperties();
+    public MybatisMateHandler mybatisMateHandler(MybatisMateProperties mybatisMateProperties) {
+        return new MybatisMateHandler(mybatisMateProperties);
     }
 
     @Bean(name = "sqlSessionFactory")
     @ConditionalOnMissingBean
     public SqlSessionFactory sqlSessionFactory(AbstractRoutingDataSource dynamicDataSource,
-                                               MybatisInterceptorConfigurer mybatisInterceptorConfigurer) throws Exception {
+                                               MybatisInterceptorConfigurer mybatisInterceptorConfigurer,MybatisMateProperties mybatisMateProperties) throws Exception {
 
         MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
         factoryBean.setDataSource(dynamicDataSource);
@@ -144,7 +140,7 @@ public class MultipleDataSourceConfiguration implements BeanDefinitionRegistryPo
         factoryBean.setConfiguration(mybatisConfiguration);
         factoryBean.setFailFast(true);
         GlobalConfig global = GlobalConfigUtils.defaults();
-        global.setMetaObjectHandler(mybatisMateHandler());
+        global.setMetaObjectHandler(mybatisMateHandler(mybatisMateProperties));
         factoryBean.setGlobalConfig(global);
         SqlSessionFactory sqlSessionFactory = factoryBean.getObject();
         //设置默认全局超时时间

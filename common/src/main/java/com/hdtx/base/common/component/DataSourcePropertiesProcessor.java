@@ -8,6 +8,7 @@ import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.context.properties.ConfigurationBeanFactoryMetadata;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBean;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindHandlerAdvisor;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.boot.context.properties.bind.BindHandler;

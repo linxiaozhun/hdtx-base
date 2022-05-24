@@ -145,7 +145,7 @@ public class WebApplication {
                 if(i != 0) {
                     resource = resources.nextElement();
                 }
-                if(resource.toString().contains("/sc-base-common-1.0")) {
+                if(resource.toString().contains("/hdtx-base-common")) {
                     tdBaseGitResource = new UrlResource(resource);
                     break;
                 }

@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
  * @Date 2017/5/15 15:02
  */
 @ControllerAdvice
-@Order(-999)
+@Order(Integer.MIN_VALUE)
 public class AppExceptionHandlerController extends CustomResponseEntityExceptionHandler {
 
     protected Logger logger = LoggerFactory.getLogger(AppExceptionHandlerController.class);
@@ -142,7 +142,7 @@ public class AppExceptionHandlerController extends CustomResponseEntityException
     @ExceptionHandler(value = IllegalArgumentException.class)
     public ModelAndView handleAppBusinessException(HttpServletRequest request, HttpServletResponse response, IllegalArgumentException e) {
         //业务异常
-        return createModeAndViewResponse(CommonErrorCode.INTERNAL_ERROR.getCode(), 200, request, response, e.getMessage());
+        return createModeAndViewResponse(CommonErrorCode.INTERNAL_ERROR.getStatus(), 200, request, response, e.getMessage());
     }
 
     @ExceptionHandler(value = BaseException.class)
@@ -167,32 +167,9 @@ public class AppExceptionHandlerController extends CustomResponseEntityException
 
 
     protected ModelAndView createModeAndViewResponse(ErrorCode errorCode, HttpServletRequest request, HttpServletResponse response, String message) {
-        return createModeAndViewResponse(errorCode.getCode(), errorCode.getStatus(), request, response, message);
+        return createModeAndViewResponse(errorCode.getStatus(), 200, request, response, message);
     }
 
-    @Deprecated
-    protected ModelAndView createModeAndViewResponse(String code, int httpStatus, HttpServletRequest request, HttpServletResponse response, String message) {
-
-        boolean needJsonResponse = ServletWebUtils.isNeedJsonResponse(request);
-        if (!isNeedDetailErrorMessage(needJsonResponse) && !needJsonResponse) {
-            message = "系统出现错误";
-        }
-        ErrorInfo error = new ErrorInfo(code, request.getRequestURI(), message, httpStatus);
-
-        if (errorInfoConverter == null) {
-            errorInfoConverter = new DefaultErrorInfoConverter();
-        }
-        if (errorInfoConverter.modifyHttpStatus()) {
-            response.setStatus(httpStatus);
-        }
-
-        if (needJsonResponse) {
-            return SpringViewUtils.createJsonErrorView(error, errorInfoConverter);
-        } else {
-            return createErrorModelAndView(httpStatus, error);
-        }
-
-    }
 
     protected ModelAndView createModeAndViewResponse(int code, int httpStatus, HttpServletRequest request, HttpServletResponse response, String message) {
 

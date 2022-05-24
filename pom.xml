@@ -37,7 +37,7 @@
         <slf4j.version>1.7.30</slf4j.version>
         <lombok.version>1.18.12</lombok.version>
         <kingbase.servion>1.0-SNAPSHOT</kingbase.servion>
-        <docker.host>tcp://192.168.22.178:2375</docker.host>
+        <docker.host>tcp://10.24.0.178:2375</docker.host>
         <docker.registry>registry.cn-shenzhen.aliyuncs.com</docker.registry>
         <docker.username>linxiaozhun</docker.username>
         <docker.password>430525fgh</docker.password>
@@ -211,12 +211,12 @@
         <snapshotRepository>
             <id>maven-snapshots</id>
             <name>maven-snapshots</name>
-            <url>http://192.168.22.175:8081/repository/maven-snapshots/</url>
+            <url>http://10.24.0.175:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
         <repository>
             <id>maven-releases</id>
             <name>maven-releases</name>
-            <url>http://192.168.22.175:8081/repository/maven-releases/</url>
+            <url>http://10.24.0.175:8081/repository/maven-releases/</url>
         </repository>
     </distributionManagement>
 </project>

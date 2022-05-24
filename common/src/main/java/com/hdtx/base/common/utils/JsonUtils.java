@@ -8,14 +8,24 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 
 /** json转换工具类
@@ -31,20 +41,28 @@ public class JsonUtils {
 
     public static final ObjectMapper OBJECT_MAPPER = createObjectMapper();
 
+    private static  final String DATE_TIME_FORMATTER="yyyy-MM-dd HH:mm:ss";
+
     /**
      * 初始化ObjectMapper
      * @return
      */
     public static ObjectMapper createObjectMapper() {
 
-        ObjectMapper objectMapper = new ObjectMapper();
+
+        ObjectMapper objectMapper = new Jackson2ObjectMapperBuilder()
+                .findModulesViaServiceLoader(true)
+                .serializerByType(LocalDateTime.class, new LocalDateTimeSerializer(
+                        DateTimeFormatter.ofPattern(DATE_TIME_FORMATTER)))
+                .deserializerByType(LocalDateTime.class, new LocalDateTimeDeserializer(
+                        DateTimeFormatter.ofPattern(DATE_TIME_FORMATTER)))
+                .build();
 
         objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
         objectMapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.configure(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS, true);
         objectMapper.setSerializationInclusion(JsonInclude.Include.ALWAYS);
-
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS , false);
         objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
         objectMapper.registerModule(new JavaTimeModule());

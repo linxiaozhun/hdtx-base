@@ -57,7 +57,7 @@ public class BaseConfiguration{
 
     @Primary
     @Bean
-    public okhttp3.OkHttpClient okHttpClient(ApplicationConstant applicationConstant){
+    public OkHttpClient okHttpClient(ApplicationConstant applicationConstant){
         return OkHttpUtils.okHttpClientBuilder(applicationConstant).build();
     }
 
