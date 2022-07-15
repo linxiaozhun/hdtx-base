@@ -1,6 +1,8 @@
 package com.hdtx.base.common.spring;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hdtx.base.common.spring.mybatisplus.generator.MybatisPlusGenerator;
+import com.hdtx.base.common.spring.mybatisplus.generator.MybatisPlusGeneratorProperties;
 import com.hdtx.base.common.spring.refresh.TdContextRefresher;
 import com.hdtx.base.common.spring.utils.EnhancedRestTemplate;
 import com.hdtx.base.common.spring.utils.OkHttpUtils;
@@ -8,6 +10,8 @@ import com.hdtx.base.common.utils.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.context.refresh.ContextRefresher;
 import org.springframework.cloud.context.scope.refresh.RefreshScope;
@@ -24,10 +28,11 @@ import org.springframework.web.client.RestTemplate;
  * @Date 2017/5/15 15:03
  */
 @EnableHystrix
-@MapperScan(basePackages = {"com.hdtx.**.dao","com.hdtx.**.mapper"})
-@ComponentScan({"com.hdtx.**.service", "com.hdtx.**.fallback", "com.hdtx.**.component","com.hdtx.**","com.hdtx.**.handle"})
+@MapperScan(basePackages = {"com.hdtx.**.dao", "com.hdtx.**.mapper"})
+@EnableConfigurationProperties(MybatisPlusGeneratorProperties.class)
+@ComponentScan({"com.hdtx.**.service", "com.hdtx.**.fallback", "com.hdtx.**.component", "com.hdtx.**", "com.hdtx.**.handle"})
 @Slf4j
-public class BaseConfiguration{
+public class BaseConfiguration {
 
     @Bean
     public ApplicationConstant applicationConstant() {
@@ -57,7 +62,7 @@ public class BaseConfiguration{
 
     @Primary
     @Bean
-    public OkHttpClient okHttpClient(ApplicationConstant applicationConstant){
+    public OkHttpClient okHttpClient(ApplicationConstant applicationConstant) {
         return OkHttpUtils.okHttpClientBuilder(applicationConstant).build();
     }
 
@@ -85,12 +90,18 @@ public class BaseConfiguration{
 
 
 
+    @Bean
+    @ConditionalOnProperty(prefix = "mybatis-plus.generator", name = "enabled", havingValue = "true", matchIfMissing = true)
+    public MybatisPlusGenerator mybatisPlusGenerator(MybatisPlusGeneratorProperties mybatisPlusGeneratorProperties) {
+        return new MybatisPlusGenerator(mybatisPlusGeneratorProperties);
+    }
+
+
 //    @Bean
 //    public SpanLogger slf4jSpanLogger(SleuthSlf4jProperties sleuthSlf4jProperties) {
 //        // Sets up MDC entries X-B3-TraceId and X-B3-SpanId
 //        return new TdSlf4jSpanLogger(sleuthSlf4jProperties.getNameSkipPattern());
 //    }
-
 
 
 }
